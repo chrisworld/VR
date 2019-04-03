@@ -104,44 +104,48 @@ public class HMDCameras : MonoBehaviour
 
     private void ComputeAspect(out float aspect)
     {
-        aspect = 2.0f;
+        aspect = 1.791f;
     }
 
     private void ComputeLeftEyeOffset(out Vector2 leftEyeOffset)
     {
-        leftEyeOffset = new Vector2(0, 0);
+        //leftEyeOffset = new Vector2(0.132f, 0);
+        leftEyeOffset = new Vector2(0.032f, 0);
     }
 
     private void ComputeRightEyeOffset(out Vector2 rightEyeOffset)
     {
-        rightEyeOffset = new Vector2(0, 0);
+        //rightEyeOffset = new Vector2(0.132f, 0);
+        rightEyeOffset = new Vector2(-0.032f, 0);
     }
 
     private void ComputeMagnification(out float magnification)
     {
-        magnification = 1.0f;
+        magnification = 3.846f;
     }
 
     private void ComputeInitialNear(out float initialNear)
     {
-        initialNear = 1.0f;
+        initialNear = 0.055f;
     }
 
     private void ComputeLeftRight(out float leftEyeLeft, out float leftEyeRight, out float rightEyeLeft, out float rightEyeRight)
     {
         //Left eye
-        leftEyeLeft = -0.01f;
-        leftEyeRight = 0.01f;
+        leftEyeLeft = -0.01725f * 3.846f / 0.055f * znear;
+        leftEyeRight = 0.032f * 3.846f / 0.055f * znear;
 
         //Right eye
-        rightEyeLeft = -0.01f;
-        rightEyeRight = 0.01f;
+        rightEyeLeft = -0.032f * 3.846f / 0.055f * znear;
+        rightEyeRight = 0.01725f * 3.846f / 0.055f * znear;
     }
 
     private void ComputeTopBottom(out float top, out float bottom)
     {
-        top = 0.01f;
-        bottom = -0.01f;
+        //top = 0.106f / 0.055f * znear;
+        //bottom = -0.106f / 0.055f * znear;
+        top = 1.923f * znear;
+        bottom = -1.923f * znear;
     }
 
     private void MorphGrid(Vector3[] screenVertices, Vector2 center, int offset, ref Vector3[] outVertices)

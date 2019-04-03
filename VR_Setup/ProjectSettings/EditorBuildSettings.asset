@@ -8,4 +8,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/CalibrationRoom.unity
     guid: ab114f5475b57094e9afe953a8547e7d
+  - enabled: 0
+    path: Assets/Scenes/OurVR.unity
+    guid: d0906447f60b7ed428b54c7ded2c5090
   m_configObjects: {}
