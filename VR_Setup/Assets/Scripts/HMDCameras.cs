@@ -22,6 +22,29 @@ public class HMDCameras : MonoBehaviour
     public const float zfar = 1000.0f; 
     public const float orthographicSize = 0.05f; // simulated phone screen size in unity. Set to 5 cm to not interfere much
 
+    [Header("Cardboard and Phone specific dimensions")]
+    // dimensions in meters
+    // phone dimensions
+    public const float w = 0.0985f;
+    public const float h = 0.0550f;
+    public const float b = 0.0040f;
+    //public const float l = 0.0315f;
+    public const float l = 0.0330f;
+
+    // eye
+    public const float d_sep = 0.0640f;
+    public const float d_vertical_sep = 0.000f;
+
+    // cardboard dimensions
+    // lense focal point
+    public const float f = 0.0500f; 
+    public const float d_eye = 0.0180f; 
+    public const float d_o = 0.0400f;
+    //public const float d_o = 0.0370f;
+
+    private const float d_i = 1 / (1 / f - 1 / d_o); 
+
+
     //These should be set after the methods have been filled in.
     private float aspect;
     private float magnification;
@@ -104,55 +127,99 @@ public class HMDCameras : MonoBehaviour
 
     private void ComputeAspect(out float aspect)
     {
-        aspect = 1.791f;
+        aspect = w / h;
+        Debug.Log("aspect: " + aspect);
     }
 
     private void ComputeLeftEyeOffset(out Vector2 leftEyeOffset)
     {
         //leftEyeOffset = new Vector2(0.132f, 0);
-        leftEyeOffset = new Vector2(0.032f, 0);
+        leftEyeOffset = new Vector2(d_sep / 2, d_vertical_sep / 2);
+        Debug.Log("left eye offset: " + leftEyeOffset.x + " / " + leftEyeOffset.y );
     }
 
     private void ComputeRightEyeOffset(out Vector2 rightEyeOffset)
     {
         //rightEyeOffset = new Vector2(0.132f, 0);
-        rightEyeOffset = new Vector2(-0.032f, 0);
+        rightEyeOffset = new Vector2(-d_sep / 2, -d_vertical_sep / 2);
+        Debug.Log("left eye offset: " + rightEyeOffset.x + " / " + rightEyeOffset.y);
     }
 
     private void ComputeMagnification(out float magnification)
     {
-        magnification = 3.846f;
+        magnification = -d_i / d_o;
+        Debug.Log("distance to image: " + d_i);
+        Debug.Log("magnification: " + magnification);
     }
 
     private void ComputeInitialNear(out float initialNear)
     {
-        initialNear = 0.055f;
+        //initialNear = 0.055f;
+        initialNear = -d_i + d_eye;
+        Debug.Log("initial near: " + initialNear);
     }
 
     private void ComputeLeftRight(out float leftEyeLeft, out float leftEyeRight, out float rightEyeLeft, out float rightEyeRight)
     {
         //Left eye
-        leftEyeLeft = -0.01725f * 3.846f / 0.055f * znear;
-        leftEyeRight = 0.032f * 3.846f / 0.055f * znear;
+        float w1 = d_sep / 2;
+        float w2 = w / 2;
+        leftEyeLeft = -w2 * magnification / initialNear * znear;
+        leftEyeRight = w1 * magnification / initialNear * znear;
 
         //Right eye
-        rightEyeLeft = -0.032f * 3.846f / 0.055f * znear;
-        rightEyeRight = 0.01725f * 3.846f / 0.055f * znear;
+        rightEyeLeft = -leftEyeRight;
+        rightEyeRight = -leftEyeLeft;
+
+        Debug.Log("left eye, left: " + leftEyeLeft + " right: " + leftEyeRight);
     }
 
     private void ComputeTopBottom(out float top, out float bottom)
     {
         //top = 0.106f / 0.055f * znear;
         //bottom = -0.106f / 0.055f * znear;
-        top = 1.923f * znear;
-        bottom = -1.923f * znear;
+        top = (-l + b + h) * magnification / initialNear * znear;
+        bottom = (-l + b)  * magnification / initialNear * znear;
+        Debug.Log("top: " + top + " bottom: " + bottom);
     }
 
     private void MorphGrid(Vector3[] screenVertices, Vector2 center, int offset, ref Vector3[] outVertices)
     {
+        // calculate eye transforms as linear functions
+        float k_x = (w / 2 - center.x);
+        float d_x = 0;
+        float k_y = h / 2;
+        float d_y = -l + b + h / 2 - center.y;
+
         for (int i = 0; i < screenVertices.Length; i++)
         {
-            outVertices[i + offset] = screenVertices[i];
+            Vector2 v = new Vector2(screenVertices[i].x * k_x + d_x, screenVertices[i].y * k_y + d_y);
+            //Vector2 v = new Vector2(screenVertices[i].x * (w / 2 - center.x), screenVertices[i].y * (-l + b - center.y ));
+            //Vector2 v = new Vector2(0, 0);
+            
+            //outVertices[i + offset].x = screenVertices[i].x * ((w / 2 - center.x));
+            //Debug.Log("calc: " + screenVertices[i].x * (w / 2 - center.x));
+            //Debug.Log("output: " + outVertices[i + offset]);
+            //outVertices[i + offset].y = screenVertices[i].y * (-l + b - center.y );
+
+            // scaling
+            //Debug.Log("v.x: " + v.x + "v.y: " + v.y);
+            //Debug.Log("v.sqrt: " + v.magnitude);
+
+            float r = v.magnitude / d_o;
+            //Debug.Log("r: " + r);
+
+            // applying barrel distortion
+            Vector2 v_new = v * (1 + K1 * Mathf.Pow(r, 2) + K2 * Mathf.Pow(r, 4));
+
+            // setting the output
+            //outVertices[i + offset].x = v_new.x / (w / 2 - center.x);
+            //outVertices[i + offset].y = v_new.y / (-l + b - center.y); 
+        
+            outVertices[i + offset].x = v_new.x / k_x - d_x;
+            outVertices[i + offset].y = v_new.y / k_y - d_y; 
+            outVertices[i + offset].z = screenVertices[i].z;
+            //if(i == 1) Debug.Log("os:" + offset + " + out.x: " + outVertices[i + offset].x + " + out.y: " + outVertices[i + offset].y);
         }
     }
 
