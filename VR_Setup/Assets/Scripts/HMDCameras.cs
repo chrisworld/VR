@@ -9,9 +9,9 @@ public class HMDCameras : MonoBehaviour
     public TextMesh messageText;
 
     [Header("Distortion")]
-    public float K1 = 0;
-    public float K2 = 0;
-    public float oversize = 0;
+    public float K1 = 0.033f;
+    public float K2 = -0.068f;
+    public float oversize = -0.125f;
 
     [Header("Built-in dimensions")]
     public const int textureWidth = 1920;
@@ -25,11 +25,10 @@ public class HMDCameras : MonoBehaviour
     [Header("Cardboard and Phone specific dimensions")]
     // dimensions in meters
     // phone dimensions
-    public const float w = 0.0985f;
-    public const float h = 0.0550f;
+    public const float w = 0.1290f;
+    public const float h = 0.0640f;
     public const float b = 0.0040f;
-    //public const float l = 0.0315f;
-    public const float l = 0.0330f;
+    public const float l = 0.0370f;
 
     // eye
     public const float d_sep = 0.0640f;
@@ -39,8 +38,7 @@ public class HMDCameras : MonoBehaviour
     // lense focal point
     public const float f = 0.0500f; 
     public const float d_eye = 0.0180f; 
-    public const float d_o = 0.0400f;
-    //public const float d_o = 0.0370f;
+    public const float d_o = 0.0350f;
 
     private const float d_i = 1 / (1 / f - 1 / d_o); 
 
@@ -128,33 +126,33 @@ public class HMDCameras : MonoBehaviour
     private void ComputeAspect(out float aspect)
     {
         aspect = w / h;
-        Debug.Log("aspect: " + aspect);
+        //Debug.Log("aspect: " + aspect);
     }
 
     private void ComputeLeftEyeOffset(out Vector2 leftEyeOffset)
     {
         leftEyeOffset = new Vector2(d_sep / 2, d_vertical_sep / 2);
-        Debug.Log("left eye offset: " + leftEyeOffset.x + " / " + leftEyeOffset.y );
+        //Debug.Log("left eye offset: " + leftEyeOffset.x + " / " + leftEyeOffset.y );
     }
 
     private void ComputeRightEyeOffset(out Vector2 rightEyeOffset)
     {
         rightEyeOffset = new Vector2(-d_sep / 2, -d_vertical_sep / 2);
-        Debug.Log("left eye offset: " + rightEyeOffset.x + " / " + rightEyeOffset.y);
+        //Debug.Log("right eye offset: " + rightEyeOffset.x + " / " + rightEyeOffset.y);
     }
 
     private void ComputeMagnification(out float magnification)
     {
         magnification = -d_i / d_o;
-        Debug.Log("distance to image: " + d_i);
-        Debug.Log("magnification: " + magnification);
+        //Debug.Log("distance to image: " + d_i);
+        //Debug.Log("magnification: " + magnification);
     }
 
     private void ComputeInitialNear(out float initialNear)
     {
         //initialNear = 0.055f;
         initialNear = -d_i + d_eye;
-        Debug.Log("initial near: " + initialNear);
+        //Debug.Log("initial near: " + initialNear);
     }
 
     private void ComputeLeftRight(out float leftEyeLeft, out float leftEyeRight, out float rightEyeLeft, out float rightEyeRight)
@@ -169,14 +167,14 @@ public class HMDCameras : MonoBehaviour
         rightEyeLeft = -leftEyeRight;
         rightEyeRight = -leftEyeLeft;
 
-        Debug.Log("left eye, left: " + leftEyeLeft + " right: " + leftEyeRight);
+        //Debug.Log("left eye, left: " + leftEyeLeft + " right: " + leftEyeRight);
     }
 
     private void ComputeTopBottom(out float top, out float bottom)
     {
         top = (-l + b + h) * magnification / initialNear * znear;
         bottom = (-l + b)  * magnification / initialNear * znear;
-        Debug.Log("top: " + top + " bottom: " + bottom);
+        //Debug.Log("top: " + top + " bottom: " + bottom);
     }
 
     private void MorphGrid(Vector3[] screenVertices, Vector2 center, int offset, ref Vector3[] outVertices)

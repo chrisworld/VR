@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.42584786, g: 0.45824522, b: 0.48427975, a: 1}
+  m_IndirectSpecularColor: {r: 0.42584753, g: 0.45824504, b: 0.4842797, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -471,18 +471,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   calibrate: 1
   messageText: {fileID: 1378096880}
-  focalLength: 0.04
-  distanceLensScreen: 0.039
-  verticalLensCenter: 0.04
-  heightPhone: 0.069
-  widthHMD: 0.135
-  widthPhone: 0.134
-  eyeRelief: 0.018
-  eyeDistance: 0.064
-  rim: 0.003
-  K1: 0
-  K2: 0
-  oversize: 0
+  K1: 0.033
+  K2: -0.068
+  oversize: -0.125
 --- !u!114 &624910642
 MonoBehaviour:
   m_ObjectHideFlags: 0

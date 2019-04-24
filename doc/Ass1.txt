@@ -6,3 +6,40 @@ Christian Walter, 01431717
 ---------------------
 
 My optimal coefficients and magnification factor:
+
+From my phones dimensions:
+
+w = 0.1290m
+h = 0.0640m
+b = 0.0040m
+
+and the given dimensions for eye separation, eye relief and focal length:
+
+d_sep = 0.0640m
+d_eye = 0.0180m
+l = 0.0500m;
+
+I could easily calculate the aspect ration and Left eye right eye offset.
+
+For the calculation of the magnification factor, the distance to the object d_o was needed. This distance is measured from the lense to the display of the smartphone.
+After choosing d_o by measuring it approximately, I found it better to decrease the value of d_o a bit, so that the scenes does not look that much zoomed in. My best parameter for d_o was found with
+
+d_o = 0.0350m
+
+which gives a magnification factor of
+
+M = 3.333
+
+The most difficult part was to find optimal coefficients K1 and K2 for the Grid distortion. After a lot of trial and errors I found it best to first find a good value for K2, cause most of the lenses distortions happens at the edge of the view and K2 stongly influences the vertices more far away from the center. I used a Barrel distortion for K2 (negativ value) to equalize the pincusion distotion at the edges. This however also distortes the center to middle ranges in a bad way, so that I needed to correct this by K1 used as pincusion distortion (positive value). After switching between these two values and fine tune them, I found the best coefficients with:
+
+K1 = 0.033
+K2 = -0.068
+
+Also I reduced the view of the smartphone with the Os value to ensure that the two images do not interfere with each eyes view and to safe some rendering for unseen content. I picked the value:
+
+OS = -0.125
+
+---------------------
+end
+---------------------
+
