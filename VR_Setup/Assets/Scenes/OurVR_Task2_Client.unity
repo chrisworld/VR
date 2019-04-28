@@ -485,6 +485,7 @@ MonoBehaviour:
   maxLength: 1000000
   reticleSize: 0.02
   reticle: {fileID: 6920769794868830213, guid: 588d77071c12f0c41ab7d0b1b3b7c7f6, type: 3}
+  interact_circle: {fileID: 0}
 --- !u!1 &914889888
 GameObject:
   m_ObjectHideFlags: 0
@@ -700,7 +701,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MultiCastIPAddress: 224.0.0.251
   MultiCastPort: 2222
-  PrerecordedData: {fileID: 4900000, guid: 1ed87af31c7fa74469c70f2dc4bf062c, type: 3}
+  PrerecordedData: {fileID: 0}
 --- !u!4 &1046531555
 Transform:
   m_ObjectHideFlags: 0

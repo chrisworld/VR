@@ -372,16 +372,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   calibrate: 1
   messageText: {fileID: 303735093}
-  K1: 0
-  K2: 0
-  oversize: 0
-  w: 0.13
-  h: 0.068
-  eye_sep: 0.064
-  f: 0.05
-  d_o: 0.045
-  b: 0.005
-  l: 0.038
+  K1: 0.033
+  K2: -0.068
+  oversize: -0.125
 --- !u!23 &784834745
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -492,6 +485,7 @@ MonoBehaviour:
   maxLength: 1000000
   reticleSize: 0.02
   reticle: {fileID: 6920769794868830213, guid: 588d77071c12f0c41ab7d0b1b3b7c7f6, type: 3}
+  interact_circle: {fileID: 0}
 --- !u!1 &914889888
 GameObject:
   m_ObjectHideFlags: 0

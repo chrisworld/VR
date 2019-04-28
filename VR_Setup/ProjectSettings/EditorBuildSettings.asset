@@ -5,10 +5,16 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/CalibrationRoom.unity
     guid: ab114f5475b57094e9afe953a8547e7d
   - enabled: 0
     path: Assets/Scenes/OurVR.unity
     guid: d0906447f60b7ed428b54c7ded2c5090
+  - enabled: 0
+    path: Assets/Scenes/OurVR_Task2_Server.unity
+    guid: c06f0ffdbbf645f4eb21172c9dbe9a88
+  - enabled: 1
+    path: Assets/Scenes/OurVR_Task2_Client.unity
+    guid: fee9fa7757b579c4eae10c7ac165933b
   m_configObjects: {}
