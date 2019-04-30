@@ -1,0 +1,14 @@
+--
+Used Assets from others
+
+--
+Bowling Pin
+by Jiří Kuba 
+Sketchfab:
+https://sketchfab.com/3d-models/bowling-pin-ac2cf6d2fbd44eb89fcf90e93b41e11f
+
+--
+Bowling Ball
+by Jiří Kuba 
+Sketchfab:
+https://sketchfab.com/3d-models/bowling-ball-17647dd372db4d059d21f11c9eccbd9e
