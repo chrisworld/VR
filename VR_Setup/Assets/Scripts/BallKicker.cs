@@ -20,7 +20,8 @@ public class BallKicker : MonoBehaviour
     {
       Vector3 direction = new Vector3(0, 1, 0);
 
-      hit.rigidbody.AddForce(direction * hitForce);
+      hit.rigidbody.AddForce(direction * hitForce, ForceMode.Impulse);
+      Debug.Log("add force");
     }
   }
 }

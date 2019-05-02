@@ -32,6 +32,7 @@ public class CameraReticle : MonoBehaviour
     private Teleporter teleporter;
     private const int teleport_layer = 10;
     private const int light_layer = 11;
+    private const int kick_layer = 12;
 
     // ball kicker
     private BallKicker ball_kicker;
@@ -49,7 +50,7 @@ public class CameraReticle : MonoBehaviour
         int ignore_layer = 2;
 
         mask = ~0 ^ (1 << grid_layer) ^ (1 << ignore_layer);
-        mask |= (1 << teleport_layer) | (1 << light_layer);
+        mask |= (1 << teleport_layer) | (1 << light_layer) | (1 << kick_layer);
 
         reticle_instance = Instantiate(reticle);
         reticle_instance.name = "Reticle";
@@ -123,12 +124,13 @@ public class CameraReticle : MonoBehaviour
                 {
                     hit.transform.parent.GetComponent<Lamp>().TurnOnOffLight();
                 }
-            }
 
-            // ball kicker
-            if (ball_kicker != null)
-            {
-                ball_kicker.Kick(hit);
+                // ball kicker
+                else if (hit.transform.gameObject.layer == kick_layer)
+                {
+                    if (ball_kicker != null)
+                        ball_kicker.Kick(hit);
+                }
             }
         }
 
