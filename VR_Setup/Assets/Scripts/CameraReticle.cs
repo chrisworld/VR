@@ -87,7 +87,7 @@ public class CameraReticle : MonoBehaviour
     
     // Update is called once per frame
     void LateUpdate()
-    {
+    {   
         if (Physics.Raycast(mainCamera.transform.position, mainCamera.transform.forward, out hit, maxLength, mask))
         {
             rayLength = hit.distance;
@@ -129,7 +129,7 @@ public class CameraReticle : MonoBehaviour
                 else if (hit.transform.gameObject.layer == kick_layer)
                 {
                     if (ball_kicker != null)
-                        ball_kicker.Kick(hit);
+                        ball_kicker.Kick(hit, mainCamera.transform.forward);
                 }
             }
         }

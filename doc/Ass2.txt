@@ -1,18 +1,18 @@
----------------------
+--
 Virtual Reality
 Assignement 2
 
 Christian Walter, 01431717
----------------------
 
+--
 Ways of Interaction:
 
 1. Gaze interaction with red circle:
-A red circle appears when the player holds his gaze for some frames at the same position.
-After the circle appears its alpha level is decreased with each frame and after it reaches zero (circle completely transparent) an action can follow.
+A red circle appears when the player holds his gaze for some frames on the same position.
+After the circle appears its alpha level is decreased with each frame and after it reaches zero (circle completely transparent) an action is followed as described in the following.
 
 2. Teleportation
-A teleporting mesh with own teleportation layer was included in the unity project. When the player stares at one point of the ground with gaze interaction, the player can teleport to this location.
+A teleporting mesh with own teleportation layer was included in the unity project. When the player stares at one point of the ground (teleportation mesh), with gaze interaction the player can teleport to this location.
 
 3. Lights On/Off
 Three lights with light layer were added to the scene. They can be turned on and off with the gaze interaction.
@@ -20,7 +20,23 @@ Three lights with light layer were added to the scene. They can be turned on and
 4. Bowling
 A set of Bowling equipment is inserted into the scene and the player can add force to the rigidbodies of them. The force is applied also with the help of the gaze interaction.
 
----------------------
-end
----------------------
+
+--
+ Credits
+
+--
+Used Assets from others
+
+--
+Bowling Pin
+by Jiří Kuba 
+Sketchfab:
+https://sketchfab.com/3d-models/bowling-pin-ac2cf6d2fbd44eb89fcf90e93b41e11f
+
+--
+Bowling Ball
+by Jiří Kuba 
+Sketchfab:
+https://sketchfab.com/3d-models/bowling-ball-17647dd372db4d059d21f11c9eccbd9e
+
 

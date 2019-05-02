@@ -5,7 +5,7 @@ using UnityEngine;
 public class BallKicker : MonoBehaviour
 {
 
-  public float hitForce = 0.5f;
+  public float hitForce;
 
   // Start is called before the first frame update
   void Start()
@@ -14,14 +14,15 @@ public class BallKicker : MonoBehaviour
   }
 
   // Update is called once per frame
-  public void Kick(RaycastHit hit)
+  public void Kick(RaycastHit hit, Vector3 direction)
   {
     if (hit.rigidbody != null)
     {
-      Vector3 direction = new Vector3(0, 1, 0);
-
+      if (hit.transform.gameObject.tag == "BowlingBall"){
+        hitForce *= 4;
+      }
+      direction +=  new Vector3(0, 0.5f, 0);
       hit.rigidbody.AddForce(direction * hitForce, ForceMode.Impulse);
-      Debug.Log("add force");
     }
   }
 }
