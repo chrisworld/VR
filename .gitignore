@@ -38,3 +38,6 @@ sysinfo.txt
 # 3d models
 *.blend
 *.fbx
+
+Animations/
+Models/
