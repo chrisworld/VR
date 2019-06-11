@@ -27,6 +27,9 @@ public class ClientReceiver : MonoBehaviour
   // Only change this if you want to record something from the network. If you're running this on mobile, you will probably need to use PersistentDataPath for storing.
   private string RecordingPath = "";
 
+  // Human Pose Handlers
+  private HumanPoseHandler source_pose_handler;
+  private List<HumanPoseHandler> dest_pose_handler = null;
 
   private TrackingDataProcessor data_processor;
   private UDPClient client;
@@ -43,6 +46,16 @@ public class ClientReceiver : MonoBehaviour
     // With these handlers, we can retarget a humanoid animation from our RetargetingAvatar to any other humanoid avatar, using Unity's Mecanim Animation system.
     //---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+    // -- 1a) 
+    // source handler
+    source_pose_handler = new HumanPoseHandler(RetargetingAvatarAnimator.avatar, RetargetingAvatarAnimator.transform);
+
+    // -- 1b)
+    // destination handler
+    foreach (AnimatorControl dest_anim in DestinationAvatarAnimators)
+    {
+      dest_pose_handler.Add(new HumanPoseHandler(dest_anim.animator.avatar, dest_anim.animator.transform));
+    }
   }
 
 
@@ -133,6 +146,8 @@ public class ClientReceiver : MonoBehaviour
     //
     //---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+    // 1
+    //skeleton_state.BonePoses
   }
 
   // FixedUpdate is called at a specific time interval, independent of framerate

@@ -11,9 +11,9 @@ public class HMDCameras : MonoBehaviour
     public TextMesh messageText;
 
     [Header("Distortion")]
-    public float K1 = 0;
-    public float K2 = 0;
-    public float oversize = 0;
+    public float K1 = 0.033f;
+    public float K2 = -0.068f;
+    public float oversize = -0.125f;
 
     [Header("Built-in dimensions")]
     public const int textureWidth = 1920;
@@ -24,16 +24,25 @@ public class HMDCameras : MonoBehaviour
     public const float zfar = 1000.0f;
     public const float orthographicSize = 0.05f; // simulated phone screen size in unity. Set to 5 cm to not interfere much
 
-#if FULL_VERSION
-    public float w = 0.13f;
-    public float h = 0.068f;
-    public float eye_sep = 0.064f;
-    public float f = 0.05f;
-    public float d_o = 0.044f;
-    public float b = 0.005f;
-    public float l = 0.038f;
-    private float d_i;
-#endif
+    [Header("Cardboard and Phone specific dimensions")]
+    // dimensions in meters
+    // phone dimensions
+    public const float w = 0.1290f;
+    public const float h = 0.0640f;
+    public const float b = 0.0040f;
+    public const float l = 0.0370f;
+
+    // eye
+    public const float d_sep = 0.0640f;
+    public const float d_vertical_sep = 0.000f;
+
+    // cardboard dimensions
+    // lense focal point
+    public const float f = 0.0500f; 
+    public const float d_eye = 0.0180f; 
+    public const float d_o = 0.0350f;
+
+    private const float d_i = 1 / (1 / f - 1 / d_o);
 
     //These should be set after the methods have been filled in.
     private float aspect;
@@ -127,7 +136,8 @@ public class HMDCameras : MonoBehaviour
     private void ComputeLeftEyeOffset(out Vector2 leftEyeOffset)
     {
 #if FULL_VERSION
-        leftEyeOffset = new Vector2(-eye_sep * 0.5f, 0);
+        //leftEyeOffset = new Vector2(-eye_sep * 0.5f, 0);
+        leftEyeOffset = new Vector2(d_sep / 2, d_vertical_sep / 2);
 #else
         leftEyeOffset = new Vector2(0, 0);
 #endif
@@ -136,7 +146,8 @@ public class HMDCameras : MonoBehaviour
     private void ComputeRightEyeOffset(out Vector2 rightEyeOffset)
     {
 #if FULL_VERSION
-        rightEyeOffset = new Vector2(eye_sep * 0.5f, 0);
+        //rightEyeOffset = new Vector2(eye_sep * 0.5f, 0);
+        rightEyeOffset = new Vector2(-d_sep / 2, -d_vertical_sep / 2);
 #else
         rightEyeOffset = new Vector2(0, 0);
 #endif
@@ -145,7 +156,8 @@ public class HMDCameras : MonoBehaviour
     private void ComputeMagnification(out float magnification)
     {
 #if FULL_VERSION
-        d_i = 1.0f / (1.0f / f - 1.0f / d_o);
+        //d_i = 1.0f / (1.0f / f - 1.0f / d_o);
+        //magnification = -d_i / d_o;
         magnification = -d_i / d_o;
 #else
         magnification = 1.0f;
@@ -155,7 +167,8 @@ public class HMDCameras : MonoBehaviour
     private void ComputeInitialNear(out float initialNear)
     {
 #if FULL_VERSION
-        initialNear = Math.Abs(d_i) + 0.018f;
+        //initialNear = Math.Abs(d_i) + 0.018f;
+        initialNear = -d_i + d_eye;
 #else
         initialNear = 1.0f;
 #endif
@@ -164,11 +177,21 @@ public class HMDCameras : MonoBehaviour
     private void ComputeLeftRight(out float leftEyeLeft, out float leftEyeRight, out float rightEyeLeft, out float rightEyeRight)
     {
 #if FULL_VERSION
-        float w1 = eye_sep * 0.5f;
-        float w2 = w * 0.5f - w1;
+        // float w1 = eye_sep * 0.5f;
+        // float w2 = w * 0.5f - w1;
+        // //Left eye
+        // leftEyeLeft = znear * (-magnification * w2) / initialNear;
+        // leftEyeRight = znear * (magnification * w1) / initialNear;
+
+        // //Right eye
+        // rightEyeLeft = -leftEyeRight;
+        // rightEyeRight = -leftEyeLeft;
+
         //Left eye
-        leftEyeLeft = znear * (-magnification * w2) / initialNear;
-        leftEyeRight = znear * (magnification * w1) / initialNear;
+        float w1 = d_sep / 2;
+        float w2 = w / 2;
+        leftEyeLeft = -w2 * magnification / initialNear * znear;
+        leftEyeRight = w1 * magnification / initialNear * znear;
 
         //Right eye
         rightEyeLeft = -leftEyeRight;
@@ -187,8 +210,10 @@ public class HMDCameras : MonoBehaviour
     private void ComputeTopBottom(out float top, out float bottom)
     {
 #if FULL_VERSION
-        top = (znear / initialNear) * magnification * (-l + b + h);
-        bottom = (znear / initialNear) * magnification * (-l + b);
+        //top = (znear / initialNear) * magnification * (-l + b + h);
+        //bottom = (znear / initialNear) * magnification * (-l + b);
+        top = (-l + b + h) * magnification / initialNear * znear;
+        bottom = (-l + b)  * magnification / initialNear * znear;
 #else
         top = 0.01f;
         bottom = -0.01f;
@@ -197,28 +222,57 @@ public class HMDCameras : MonoBehaviour
 
     private void MorphGrid(Vector3[] screenVertices, Vector2 center, int offset, ref Vector3[] outVertices)
     {
+        // for (int i = 0; i < screenVertices.Length; i++)
+        // {
+#if FULL_VERSION
+        //     Vector2 dims = new Vector2(w, h);
+        //     Vector3 src = screenVertices[i];
+        //     Vector3 src_2d = screenVertices[i];
+        //     Vector2 conv = src_2d * (0.5f * dims) - center;
+
+        //     float r_ = conv.magnitude;
+        //     float r = r_ / d_o;
+        //     float r2 = r * r;
+        //     float r4 = r2 * r2;        top = (-l + b + h) * magnification / initialNear * znear;
+        // bottom = (-l + b)  * magnification / initialNear * znear;
+        //     float d = (1.0f + K1 * r2 + K2 * r4);
+
+        //     Vector2 undist = conv * d;
+        //     Vector2 dst = (undist + center) / (0.5f * dims);
+
+        //     outVertices[i + offset] = new Vector3(dst.x, dst.y, src.z);
+
+        // calculate eye space transforms as linear functions
+        float k_x = (w / 2 - Mathf.Abs(center.x));
+        float d_x = 0;
+        float k_y = h / 2;
+        float d_y = -l + b + h / 2 - Mathf.Abs(center.y);
+
+        // morph each vertice
         for (int i = 0; i < screenVertices.Length; i++)
         {
-#if FULL_VERSION
-            Vector2 dims = new Vector2(w, h);
-            Vector3 src = screenVertices[i];
-            Vector3 src_2d = screenVertices[i];
-            Vector2 conv = src_2d * (0.5f * dims) - center;
+            // change to eye space
+            Vector2 v = new Vector2(screenVertices[i].x * k_x + d_x, screenVertices[i].y * k_y + d_y);
 
-            float r_ = conv.magnitude;
-            float r = r_ / d_o;
-            float r2 = r * r;
-            float r4 = r2 * r2;
-            float d = (1.0f + K1 * r2 + K2 * r4);
+            // scaling
+            float r = v.magnitude / d_o;
 
-            Vector2 undist = conv * d;
-            Vector2 dst = (undist + center) / (0.5f * dims);
+            // applying barrel distortion
+            Vector2 v_new = v * (1 + K1 * Mathf.Pow(r, 2) + K2 * Mathf.Pow(r, 4));
 
-            outVertices[i + offset] = new Vector3(dst.x, dst.y, src.z);
-#else
-            outVertices[i + offset] = screenVertices[i];
-#endif
+            // setting the output and go back to screen space
+            outVertices[i + offset].x = v_new.x / k_x - d_x;
+            outVertices[i + offset].y = v_new.y / k_y - d_y; 
+            outVertices[i + offset].z = screenVertices[i].z;
         }
+
+#else
+        for (int i = 0; i < screenVertices.Length; i++)
+        {
+            outVertices[i + offset] = screenVertices[i];
+        }
+#endif
+
     }
 
     /*************************END OF ASSIGNMENT 1*************************/
