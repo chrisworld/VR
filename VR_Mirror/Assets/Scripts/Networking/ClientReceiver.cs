@@ -29,7 +29,10 @@ public class ClientReceiver : MonoBehaviour
 
   // Human Pose Handlers
   private HumanPoseHandler source_pose_handler;
-  private List<HumanPoseHandler> dest_pose_handler = null;
+  private List<HumanPoseHandler> dest_pose_handler = new List<HumanPoseHandler>();
+
+  // Start position of avatar
+  private List<Vector3> avatar_start_pos = new List<Vector3>();
 
   private TrackingDataProcessor data_processor;
   private UDPClient client;
@@ -46,15 +49,17 @@ public class ClientReceiver : MonoBehaviour
     // With these handlers, we can retarget a humanoid animation from our RetargetingAvatar to any other humanoid avatar, using Unity's Mecanim Animation system.
     //---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-    // -- 1a) 
     // source handler
     source_pose_handler = new HumanPoseHandler(RetargetingAvatarAnimator.avatar, RetargetingAvatarAnimator.transform);
 
-    // -- 1b)
     // destination handler
     foreach (AnimatorControl dest_anim in DestinationAvatarAnimators)
     {
+      // add handler
       dest_pose_handler.Add(new HumanPoseHandler(dest_anim.animator.avatar, dest_anim.animator.transform));
+      
+      // add avatar start position
+      avatar_start_pos.Add(dest_anim.animator.GetBoneTransform(HumanBodyBones.Hips).position);
     }
   }
 
@@ -118,6 +123,14 @@ public class ClientReceiver : MonoBehaviour
     //           required Functions: Animator.GetBoneTransform
     //           required Classes/Structs: HumanBodyBones, VRVUTypes.OptitrackPose, Transform
     //
+
+    foreach (var bone in skeleton_state.BonePoses)
+    {
+      Transform retarget_bone = RetargetingAvatarAnimator.GetBoneTransform(bone.Key);
+      retarget_bone.position = bone.Value.Position;
+      retarget_bone.rotation = bone.Value.Orientation;
+    }
+
     //---------------------------------------------------------------------------------------------------------------------------------------------------------------------
     //
     //       3.) After we have our animated, hidden RetargetingAvatar (you can verify this by enabling "RetargetingAvatar" in Unity), we can
@@ -136,6 +149,27 @@ public class ClientReceiver : MonoBehaviour
     //             (DestinationAvatarAnimators[...].track_position_animator.GetBoneTransform(HumanBodyBones.Hips)). You can then apply just the x/y movement of the
     //             RetargetingAvatar such that the translation is the same in world coordinates, but the movement is still correctly scaled to the model.
     //
+
+    // Get retargeting avatar pose
+    HumanPose source_pose = new HumanPose();
+    source_pose_handler.GetHumanPose(ref source_pose);
+
+    int i = 0;
+
+    // set all destination avatars
+    foreach (HumanPoseHandler dest_handler in dest_pose_handler)
+    {
+      // set pose
+      dest_handler.SetHumanPose(ref source_pose);
+
+      // lock pose
+      if (DestinationAvatarAnimators[i].lock_position)
+      {
+        DestinationAvatarAnimators[i].animator.GetBoneTransform(HumanBodyBones.Hips).position = avatar_start_pos[i];
+      }
+      i++;
+    }
+
     //---------------------------------------------------------------------------------------------------------------------------------------------------------------------
     //
     //       4.) Build your own virtual hall of mirrors! 
@@ -146,8 +180,7 @@ public class ClientReceiver : MonoBehaviour
     //
     //---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-    // 1
-    //skeleton_state.BonePoses
+
   }
 
   // FixedUpdate is called at a specific time interval, independent of framerate
