@@ -1,4 +1,10 @@
-﻿using System;
+/**
+ * Processor interface/class for VRVU 2019 at Graz University of Technology
+ *
+ * @author     Thomas Neff <thomas.neff@icg.tugraz.at>
+ */
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -275,6 +281,7 @@ public class TrackingDataProcessor : INetworkMessageHandler
           {
             // If we are behind, we can repeat and try to catch up.
             repeat = true;
+            handleNetworkMessage(recorded_bytes[recorded_bytes_index % recorded_bytes.Count]);
             recorded_bytes_index++;
             first_frame_future = false;
           }

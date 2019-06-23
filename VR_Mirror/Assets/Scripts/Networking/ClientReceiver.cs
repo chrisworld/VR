@@ -165,7 +165,12 @@ public class ClientReceiver : MonoBehaviour
       // lock pose
       if (DestinationAvatarAnimators[i].lock_position)
       {
-        DestinationAvatarAnimators[i].animator.GetBoneTransform(HumanBodyBones.Hips).position = avatar_start_pos[i];
+        Vector3 scale_tar_avatar = DestinationAvatarAnimators[i].animator.transform.localScale;
+        Vector3 ret_avatar_pos = RetargetingAvatarAnimator.GetBoneTransform(HumanBodyBones.Hips).position;
+        Vector3 tar_avatar_pos = new Vector3(avatar_start_pos[i].x, ret_avatar_pos.y * scale_tar_avatar.y, avatar_start_pos[i].z);
+
+        // set the destination avatars hip transform
+        DestinationAvatarAnimators[i].animator.GetBoneTransform(HumanBodyBones.Hips).position = tar_avatar_pos;
       }
       i++;
     }
